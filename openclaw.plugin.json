@@ -1,0 +1,111 @@
+{
+  "id": "icloud-mail-manage",
+  "name": "iCloud Mail Manage",
+  "description": "Search, sort (move), and mark read/unread on an IMAP mailbox. Never deletes mail.",
+  "version": "0.1.0",
+  "configSchema": {
+    "type": "object",
+    "required": [
+      "host",
+      "user",
+      "password"
+    ],
+    "properties": {
+      "host": {
+        "type": "string",
+        "description": "IMAP host, e.g. imap.mail.me.com"
+      },
+      "port": {
+        "type": "number",
+        "description": "IMAP port, default 993"
+      },
+      "user": {
+        "type": "string",
+        "description": "Mailbox login (full email address)"
+      },
+      "password": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "object",
+            "required": [
+              "source",
+              "provider",
+              "id"
+            ],
+            "properties": {
+              "source": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "env"
+                  },
+                  {
+                    "type": "string",
+                    "const": "file"
+                  },
+                  {
+                    "type": "string",
+                    "const": "exec"
+                  },
+                  {
+                    "type": "string",
+                    "const": "store"
+                  }
+                ]
+              },
+              "provider": {
+                "type": "string",
+                "minLength": 1
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        ],
+        "description": "IMAP password or SecretRef. Resolved to plaintext by OpenClaw before this plugin runs."
+      },
+      "mailbox": {
+        "type": "string",
+        "description": "Default mailbox, default INBOX"
+      }
+    }
+  },
+  "activation": {
+    "onStartup": true
+  },
+  "configContracts": {
+    "secretInputs": {
+      "paths": [
+        {
+          "path": "password",
+          "expected": "string"
+        }
+      ]
+    }
+  },
+  "uiHints": {
+    "password": {
+      "label": "IMAP password",
+      "sensitive": true
+    }
+  },
+  "contracts": {
+    "tools": [
+      "mail_list_folders",
+      "mail_search",
+      "mail_mark",
+      "mail_read",
+      "mail_rename_folder",
+      "mail_create_folder",
+      "mail_subscribe_folder",
+      "mail_move"
+    ]
+  }
+}
